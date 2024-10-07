@@ -1,0 +1,95 @@
+
+/* Navbar Styling */
+.pizza-navbar {
+    background-color: #2c3e50;
+    /* Dark navy blue for elegance */
+    font-family: 'Roboto', sans-serif;
+    /* Clean modern font */
+}
+
+.pizza-navbar .navbar-brand {
+    font-size: 1.5rem;
+    color: #f39c12;
+    /* Warm pizza-like color for the brand name */
+}
+
+.pizza-navbar .navbar-brand:hover {
+    color: #e67e22;
+    /* Lighter orange on hover */
+}
+
+.pizza-navbar .navbar-nav .nav-link {
+    color: #ecf0f1;
+    /* Light text color for clarity */
+    font-weight: 500;
+    padding: 8px 15px;
+    transition: color 0.3s;
+}
+
+.pizza-navbar .navbar-nav .nav-link:hover {
+    color: #f39c12;
+    /* Change to pizza-like orange on hover */
+}
+
+.pizza-navbar .navbar-nav .nav-link.active {
+    border-bottom: 3px solid #f39c12;
+    /* Indicator for active link */
+}
+
+.pizza-navbar .navbar-toggler {
+    border-color: #f39c12;
+    /* Toggler icon color */
+}
+
+.pizza-navbar .cart-badge {
+    background-color: #e74c3c;
+    /* Red badge for cart items */
+    color: white;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+.pizza-navbar .logo {
+    max-height: 40px;
+    /* Adjust logo size */
+    margin-right: 10px;
+}
+
+/* Hover effect for cart icon */
+.pizza-navbar .fas.fa-shopping-cart {
+    margin-right: 5px;
+    transition: transform 0.2s;
+}
+
+.pizza-navbar .nav-link:hover .fas.fa-shopping-cart {
+    transform: scale(1.2);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .pizza-navbar .navbar-brand {
+        font-size: 1.3rem;
+    }
+
+    .pizza-navbar .nav-link {
+        font-size: 0.9rem;
+    }
+}
+
+.btn-primary,
+.btn-warning {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #007bff;
+    box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
+}
+
+.btn-warning:hover {
+    background-color: #e67e22;
+    box-shadow: 0 8px 16px rgba(230, 126, 34, 0.3);
+}
+
