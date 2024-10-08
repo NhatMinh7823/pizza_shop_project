@@ -1,39 +1,66 @@
-<!-- pages/product-detail.php -->
 <?php
 require_once '../config.php';
-require_once '../controllers/cartController.php';
-$cartController = new CartController($conn);
+require_once '../controllers/ProductController.php';
 
-// Assume user_id is stored in the session
-if (!isset($_SESSION['user_id'])) {
-  // Nếu người dùng chưa đăng nhập, chuyển hướng họ đến trang đăng nhập
-  header('Location: /index.php?page=login');
-  exit;
-}
+// Khởi tạo ProductController
+$productController = new ProductController($conn);
 
-$user_id = $_SESSION['user_id'];
-$product_id = $_GET['id'];
-$stmt = $conn->prepare("SELECT * FROM products WHERE id = :id");
-$stmt->execute(['id' => $product_id]);
-$product = $stmt->fetch(PDO::FETCH_ASSOC);
+// Lấy ID sản phẩm từ URL
+$product_id = isset($_GET['id']) ? $_GET['id'] : null;
+$product = $productController->getProductDetails($product_id);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $quantity = $_POST['quantity'];
-  $cartController->addToCart($user_id, $product_id, $quantity);
-  header("Location: /index.php?page=cart");
-  exit;
+// Kiểm tra nếu sản phẩm không tồn tại
+if (!$product) {
+    echo "<h1 class='text-center mt-5'>Product not found</h1>";
+    exit();
 }
 ?>
 
 <div class="container my-5">
-  <h1><?php echo $product['name']; ?></h1>
-  <p><?php echo $product['description']; ?></p>
-  <h3>$<?php echo $product['price']; ?></h3>
-  <form method="POST" action="/index.php?page=product-detail&id=<?php echo $product_id; ?>">
-    <div class="form-group">
-      <label for="quantity">Quantity:</label>
-      <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1">
+    <div class="row">
+        <!-- Hình ảnh sản phẩm -->
+        <div class="col-md-6">
+            <img src="/images/<?php echo htmlspecialchars($product['image']); ?>" class="img-fluid rounded-lg shadow-lg" alt="<?php echo htmlspecialchars($product['name']); ?>">
+        </div>
+
+        <!-- Chi tiết sản phẩm -->
+        <div class="col-md-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-3"><?php echo htmlspecialchars($product['name']); ?></h1>
+            <p class="text-lg text-gray-600 mb-3"><?php echo htmlspecialchars($product['description']); ?></p>
+            <h3 class="text-2xl font-semibold text-danger mb-4">$<?php echo htmlspecialchars($product['price']); ?></h3>
+
+            <!-- Form thêm vào giỏ hàng -->
+            <form method="POST" class="add-to-cart-form" style="display:inline;">
+                <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+                <div class="form-group mb-4">
+                    <label for="quantity" class="text-lg font-semibold">Quantity:</label>
+                    <input type="number" class="form-control w-25" id="quantity" name="quantity" value="1" min="1">
+                </div>
+                <button type="button" class="btn btn-primary add-to-cart-button">Add to Cart</button>
+            </form>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Add to Cart</button>
-  </form>
+
+    <!-- Sản phẩm liên quan ngẫu nhiên -->
+    <div class="related-products mt-5">
+        <h2 class="text-center text-2xl font-bold text-gray-800">You May Also Like</h2>
+        <div class="row">
+            <?php
+            $relatedProducts = $productController->getRandomProducts(3); // Lấy 3 sản phẩm ngẫu nhiên
+            foreach ($relatedProducts as $relatedProduct):
+            ?>
+                <div class="col-md-4 col-sm-6 p-4">
+                    <div class="card h-full bg-white rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out">
+                        <img class="card-img-top" src="/images/<?php echo htmlspecialchars($relatedProduct['image']); ?>"
+                             alt="<?php echo htmlspecialchars($relatedProduct['name']); ?>">
+                        <div class="card-body">
+                            <h5 class="card-title text-xl font-bold text-gray-800"><?php echo htmlspecialchars($relatedProduct['name']); ?></h5>
+                            <p class="card-text text-danger font-semibold">$<?php echo htmlspecialchars($relatedProduct['price']); ?></p>
+                            <a href="/index.php?page=product-detail&id=<?php echo $relatedProduct['id']; ?>" class="btn btn-primary mt-2">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </div>

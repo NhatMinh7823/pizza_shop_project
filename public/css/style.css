@@ -93,3 +93,8 @@
     box-shadow: 0 8px 16px rgba(230, 126, 34, 0.3);
 }
 
+.login-ann{
+    margin: 50px 0;
+    font-weight: bolder;
+    color: #e74c3c;
+}

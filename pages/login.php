@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   }
 }
 ?>
-
+<h1 class="text-center login-ann">Xin hãy vui lòng đăng nhập để sử dụng các chức năng mua hàng</h1>
 <h1 class="text-center">Login</h1>
 
 <div class="container">
