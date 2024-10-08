@@ -1,26 +1,29 @@
-<?php // controllers/orderController.php
-session_start();
-include('../includes/config.php');
+<?php
+require_once '../models/Order.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $name = $_POST['name'];
-  $address = $_POST['address'];
-  $payment_method = $_POST['payment_method'];
-  $cartItems = $_SESSION['cart'];
-  $total = array_sum(array_map(function($item) {
-    return $item['quantity'] * $item['price'];
-  }, $cartItems));
+class OrderController
+{
+  private $orderModel;
 
-  // Lưu đơn hàng vào database
-  $stmt = $conn->prepare("INSERT INTO orders (name, address, payment_method, total) VALUES (:name, :address, :payment_method, :total)");
-  $stmt->execute([
-    'name' => $name,
-    'address' => $address,
-    'payment_method' => $payment_method,
-    'total' => $total
-  ]);
+  public function __construct($db)
+  {
+    $this->orderModel = new Order($db);
+  }
 
-  // Xóa giỏ hàng sau khi đặt hàng thành công
-  unset($_SESSION['cart']);
-  header('Location: ../pages/order-success.php');
+  // Create a new order
+  public function createOrder($user_id, $total, $payment_method, $address)
+  {
+    return $this->orderModel->createOrder($user_id, $total, $payment_method, $address);
+  }
+
+  // Add items to an order
+  public function addOrderItem($order_id, $product_id, $quantity, $price)
+  {
+    return $this->orderModel->addOrderItem($order_id, $product_id, $quantity, $price);
+  }
+  public function getOrderDetails($order_id, $user_id)
+  {
+    return $this->orderModel->getOrderDetails($order_id, $user_id);
+  }
+
 }

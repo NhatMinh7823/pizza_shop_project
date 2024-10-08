@@ -60,7 +60,8 @@ if (isset($_GET['action'])) {
                 <?php foreach ($cartItems as $item): ?>
                     <tr>
                         <td>
-                            <img src="/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" width="50">
+                            <img src="/images/<?= htmlspecialchars($item['image']) ?>"
+                                alt="<?= htmlspecialchars($item['name']) ?>" width="50">
                             <?= htmlspecialchars($item['name']) ?>
                         </td>
                         <td>$<?= htmlspecialchars($item['price']) ?></td>
@@ -73,16 +74,22 @@ if (isset($_GET['action'])) {
                         </td>
                         <td>$<?= htmlspecialchars($item['price'] * $item['quantity']) ?></td>
                         <td>
-                            <a href="/index.php?page=cart&action=delete&cart_id=<?= $item['id'] ?>" class="btn btn-danger">Delete</a>
+                            <a href="/index.php?page=cart&action=delete&cart_id=<?= $item['id'] ?>"
+                                class="btn btn-danger">Delete</a>
                         </td>
                     </tr>
+
                 <?php endforeach; ?>
             </tbody>
+            
         </table>
+        <div class="text-center mt-4">
+                <a href="/index.php?page=checkout" class="btn btn-success">Proceed to Checkout</a>
+            </div>
     <?php else: ?>
-        <p class="text-center">Your cart is empty.</p>
+        <div class="alert alert-info text-center">
+            <p>Your cart is empty. Why not check out our delicious pizzas?</p>
+            <a href="/index.php?page=products" class="btn btn-primary mt-3">Go to Products</a>
+        </div>
     <?php endif; ?>
-    <div class="text-center mt-4">
-    <a href="/index.php?page=checkout" class="btn btn-success">Proceed to Checkout</a>
-</div>
 </div>

@@ -19,8 +19,10 @@ class Cart
     // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
     public function getCartItems($user_id)
     {
-        $query = "SELECT c.id, c.quantity, p.name, p.price, p.image 
-                  FROM " . $this->table . " c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?";
+        $query = "SELECT c.id, c.product_id, c.quantity, p.name, p.price, p.image 
+              FROM " . $this->table . " c 
+              JOIN products p ON c.product_id = p.id 
+              WHERE c.user_id = ?";
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$user_id]);
@@ -64,4 +66,11 @@ class Cart
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([$cart_id]);
     }
+    public function clearUserCart($user_id)
+    {
+        $query = "DELETE FROM " . $this->table . " WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$user_id]);
+    }
+
 }

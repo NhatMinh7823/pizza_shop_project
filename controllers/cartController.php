@@ -33,4 +33,10 @@ class CartController
   {
     return $this->cartModel->deleteCartItem($cart_id);
   }
+
+  public function clearCart($user_id)
+  {
+    $this->cartModel->clearUserCart($user_id);
+  }
+
 }

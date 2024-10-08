@@ -42,7 +42,10 @@ switch ($page) {
         break;
     case 'register':
         include '../pages/register.php';
-        break;    
+        break;
+    case 'order-success':
+        include '../pages/order-success.php';
+        break;
     default:
         include '../pages/404.php'; // Trang lỗi 404
         break;
