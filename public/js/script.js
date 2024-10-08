@@ -1,6 +1,10 @@
 document.getElementById('navbar-toggler').addEventListener('click', function () {
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenu.classList.toggle('hidden');
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+});
+
+// Toggle user dropdown
+document.getElementById('user-dropdown-toggle').addEventListener('click', function () {
+    document.getElementById('user-dropdown').classList.toggle('hidden');
 });
 // public/js/script.js
 
