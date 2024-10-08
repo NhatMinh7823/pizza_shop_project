@@ -1,6 +1,6 @@
 <?php
 // includes/config.php
-$host = 'localhost';
+$host = 'localhost:3307';
 $dbname = 'ct275_pizza';
 $username = 'root';
 $password = '';

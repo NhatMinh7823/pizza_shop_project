@@ -7,16 +7,13 @@ require_once '../controllers/CartController.php';
 $productController = new ProductController($conn);
 $cartController = new CartController($conn);
 
-// Assume user_id is stored in the session
-// session_start(); // Đảm bảo rằng session được bắt đầu
+if (!isset($_SESSION['user_id'])) {
+    // Nếu người dùng chưa đăng nhập, chuyển hướng họ đến trang đăng nhập
+    header('Location: /index.php?page=login');
+    exit;
+}
 
-// if (!isset($_SESSION['user_id'])) {
-//     // Nếu người dùng chưa đăng nhập, chuyển hướng họ đến trang đăng nhập
-//     header('Location: /index.php?page=login');
-//     exit;
-// }
-
-// $user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
     $quantity = $_POST['quantity'];

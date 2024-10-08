@@ -27,14 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 }
 
 // Xử lý xóa sản phẩm khỏi giỏ hàng
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['cart_id']) && is_numeric($_GET['cart_id'])) {
-    $cart_id = (int)$_GET['cart_id']; // Ép kiểu $cart_id thành số nguyên
-    $cartController->deleteCartItem($cart_id);
-    header("Location: /index.php?page=cart");
-    exit();
-} else {
-    // Nếu không hợp lệ, bạn có thể xử lý lỗi hoặc thông báo cho người dùng
-    echo "Invalid cart ID or action.";
+if (isset($_GET['action'])) {
+    if ($_GET['action'] === 'delete' && isset($_GET['cart_id']) && is_numeric($_GET['cart_id'])) {
+        $cart_id = (int) $_GET['cart_id']; // Convert $cart_id to an integer
+        $cartController->deleteCartItem($cart_id);
+        header("Location: /index.php?page=cart");
+        exit();
+    } else {
+        // Only display the error if the action is specifically delete but invalid
+        if ($_GET['action'] === 'delete') {
+            echo "Invalid cart ID or action.";
+        }
+    }
 }
 ?>
 
@@ -61,7 +65,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['cart_i
                         </td>
                         <td>$<?= htmlspecialchars($item['price']) ?></td>
                         <td>
-                            <form method="POST">
+                            <form method="POST" action="/index.php?page=cart">
                                 <input type="hidden" name="cart_id" value="<?= $item['id'] ?>">
                                 <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="1">
                                 <button type="submit" name="update" class="btn btn-primary">Update</button>
@@ -69,10 +73,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['cart_i
                         </td>
                         <td>$<?= htmlspecialchars($item['price'] * $item['quantity']) ?></td>
                         <td>
-                            <form method="POST">
-                                <input type="hidden" name="cart_id" value="<?= $item['id'] ?>">
-                                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
-                            </form>
+                            <a href="/index.php?page=cart&action=delete&cart_id=<?= $item['id'] ?>" class="btn btn-danger">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -81,4 +82,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['cart_i
     <?php else: ?>
         <p class="text-center">Your cart is empty.</p>
     <?php endif; ?>
+    <div class="text-center mt-4">
+    <a href="/index.php?page=checkout" class="btn btn-success">Proceed to Checkout</a>
+</div>
 </div>
