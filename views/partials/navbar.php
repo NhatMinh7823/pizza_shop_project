@@ -4,7 +4,7 @@
     <!-- Logo and Brand Name -->
     <div class="flex items-center space-x-3">
       <img src="/images/logo-removebg.png" alt="Pizza Store" class="h-12 w-12">
-      <a href="/index.php?page=home" class="text-2xl font-bold">Pizza Store</a>
+      <a href="/index.php?page=home" class="text-3xl font-bold">Pizza Store</a>
     </div>
 
     <!-- Mobile Menu Button -->

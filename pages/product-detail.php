@@ -20,7 +20,8 @@ if (!$product) {
     <div class="row">
         <!-- Hình ảnh sản phẩm -->
         <div class="col-md-6">
-            <img src="/images/<?php echo htmlspecialchars($product['image']); ?>" class="img-fluid rounded-lg shadow-lg" alt="<?php echo htmlspecialchars($product['name']); ?>">
+            <img src="/images/<?php echo htmlspecialchars($product['image']); ?>"
+                class="img-fluid rounded-lg shadow-lg" style="width: 80%; height: auto;" alt="<?php echo htmlspecialchars($product['name']); ?>">
         </div>
 
         <!-- Chi tiết sản phẩm -->
@@ -52,7 +53,7 @@ if (!$product) {
                 <div class="col-md-4 col-sm-6 p-4">
                     <div class="card h-full bg-white rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out">
                         <img class="card-img-top" src="/images/<?php echo htmlspecialchars($relatedProduct['image']); ?>"
-                             alt="<?php echo htmlspecialchars($relatedProduct['name']); ?>">
+                            alt="<?php echo htmlspecialchars($relatedProduct['name']); ?>">
                         <div class="card-body">
                             <h5 class="card-title text-xl font-bold text-gray-800"><?php echo htmlspecialchars($relatedProduct['name']); ?></h5>
                             <p class="card-text text-danger font-semibold">$<?php echo htmlspecialchars($relatedProduct['price']); ?></p>

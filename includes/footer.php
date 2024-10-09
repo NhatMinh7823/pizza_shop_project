@@ -1,6 +1,6 @@
 <footer class="footer bg-dark text-white text-center py-3">
   <div class="container">
-    <p class="mb-0">© 2024 Pizza Store by Minh & Toan.</p>
+    <p class="mb-0">© 2024 Pizza Store by MinhToan</p>
   </div>
 </footer>
 

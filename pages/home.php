@@ -16,38 +16,39 @@ $discountProduct = $productModel->getDiscountProduct();
 <div class="container my-5">
   <!-- Phần jumbotron chào mừng -->
   <div class="jumbotron text-center bg-info text-white">
-    <h1 class="display-4">Welcome to Pizza Store Minh!</h1>
-    <p class="lead">Delicious pizzas made with the finest ingredients. Order now!</p>
-    <a class="btn btn-primary btn-lg" href="/index.php?page=products" role="button">Shop Now</a>
+    <h1 class="display-4">Welcome to MinhToan Pizza Store !</h1>
+    <p class="lead">Delicious pizzas made with the finest ingredients. Order now!</p></br>
+    <a class="btn btn-primary btn-lg" href="/index.php?page=products" role="button">Go shopping now</a>
   </div>
 
   <!-- Phần sản phẩm giảm giá -->
-  <?php if ($discountProduct): ?>
-    <h2 class="text-center my-5">Special Discount Offer</h2>
+  <h2 class="text-center my-5 font-bold">Special Discount Offer</h2>
+  <?php foreach ($discountProduct as $product): ?>
     <div class="card mb-4">
       <div class="row no-gutters">
         <div class="col-md-4">
-          <img src="/images/<?php echo $discountProduct['image']; ?>" class="card-img"
-            alt="<?php echo $discountProduct['name']; ?>">
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <img src="/images/<?php echo htmlspecialchars($product['image']); ?>"
+              class="card-img" style="width: 55%; height: auto;"
+              alt="<?php echo htmlspecialchars($product['name']); ?>">
+          </div>
         </div>
         <div class="col-md-8">
           <div class="card-body">
-            <h5 class="card-title"><?php echo $discountProduct['name']; ?></h5>
-            <p class="card-text"><?php echo $discountProduct['description']; ?></p>
+            <h5 class="card-title"><?php echo $product['name']; ?></h5>
+            <p class="card-text"><?php echo $product['description']; ?></p>
             <p class="card-text">
-              <small class="text-muted">Original Price: $<?php echo $discountProduct['price']; ?></small><br>
-              <strong>Discounted Price: $<?php echo $discountProduct['discount']; ?></strong>
+              <small class="text-muted">Original Price: $<?php echo $product['price']; ?></small><br>
+              <strong>Discounted Price: $<?php echo $product['discount']; ?></strong>
             </p>
-            <p class="card-text text-danger" id="discount-timer">Limited Time Offer!</p>
-            <a href="/index.php?page=product-detail&id=<?php echo $discountProduct['id']; ?>" class="btn btn-danger">Buy
-              Now</a>
+            <p class="card-text text-danger" id="discount-timer">Limited Time Offer!</p></br>
+            <a href="/index.php?page=product-detail&id=<?php echo $product['id']; ?>" class="btn btn-danger">Buy now</a>
             <script>
-
               // JavaScript cho đếm ngược thời gian khuyến mãi
               function countdownTimer(endTime) {
                 var countDownDate = new Date(endTime).getTime();
 
-                var x = setInterval(function () {
+                var x = setInterval(function() {
                   var now = new Date().getTime();
                   var distance = countDownDate - now;
 
@@ -70,10 +71,10 @@ $discountProduct = $productModel->getDiscountProduct();
         </div>
       </div>
     </div>
-  <?php endif; ?>
+  <?php endforeach; ?>
 
   <!-- Phần hiển thị 3 pizza ngẫu nhiên -->
-  <h2 class="text-center my-5">Featured Pizzas</h2>
+  <h2 class="text-center my-5 font-bold">Featured Pizzas</h2>
   <div class="row">
     <?php foreach ($randomProducts as $product): ?>
       <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
@@ -96,12 +97,10 @@ $discountProduct = $productModel->getDiscountProduct();
     <h2 class="text-2xl font-bold mb-4">Bạn đã đăng xuất thành công!</h2>
     <p class="mb-6 text-gray-600">Nếu muốn đặt hàng, xin hãy Đăng nhập hoặc Đăng ký.</p>
     <div class="flex justify-center space-x-4">
-      <a href="/index.php?page=login" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">
-        Đăng nhập
-      </a>
-      <a href="/index.php?page=home" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200">
-        Tiếp tục ở trang chủ
-      </a>
+      <a href="/index.php?page=login"
+        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">Đăng nhập</a>
+      <a href="/index.php?page=home"
+        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200">Tiếp tục ở trang chủ</a>
     </div>
   </div>
 </div>

@@ -31,9 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<h1 class="text-center">Register</h1>
-
-<div class="container">
+<h1 class="text-center text-3xl font-bold mt-10">Register</h1></br>
+<div class="container mx-auto max-w-md p-8 bg-white shadow-lg rounded-lg">
     <form method="POST" action="/index.php?page=register">
         <div class="form-group">
             <label for="name">Name:</label>
@@ -57,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($success): ?>
             <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" class="btn btn-primary w-full p-2 bg-blue-500 hover:bg-blue-200 text-white font-bold rounded-md transition duration-50">Register</button>
     </form>
-    <p>Already have an account? <a href="/index.php?page=login">Login here</a></p>
-</div>
+    <p class="text-center mt-6">Already have an account? <a href="/index.php?page=login" class="text-blue-500 hover:underline">Login here</a></p>
+</div></br>

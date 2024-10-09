@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   // Kiểm tra đăng nhập
   $user = $userController->login($email, $password);
-  
+
   if ($user) {
     // Đăng nhập thành công
     $_SESSION['user_id'] = $user['id']; // Lưu ID người dùng vào session
@@ -37,9 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <!-- Giao diện người dùng -->
-<h1 class="text-center text-3xl font-bold mt-10">Login</h1>
-<p class="text-center text-xl mb-10 text-gray-600">Xin hãy vui lòng đăng nhập để sử dụng các chức năng mua hàng</p>
-
+<h1 class="text-center text-3xl font-bold mt-10">Login</h1></br>
+<!-- <p class="text-center text-xl mb-10 text-gray-600">Xin hãy vui lòng đăng nhập để sử dụng các chức năng mua hàng</p> -->
 <div class="container mx-auto max-w-md p-8 bg-white shadow-lg rounded-lg">
   <form method="POST" action="/index.php?page=login">
     <div class="form-group mb-4">
@@ -56,4 +55,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <button type="submit" class="btn btn-primary w-full p-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-md transition duration-200">Login</button>
   </form>
   <p class="text-center mt-6">Don't have an account? <a href="/index.php?page=register" class="text-blue-500 hover:underline">Register here</a></p>
-</div>
+</div></br>

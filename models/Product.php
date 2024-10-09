@@ -60,6 +60,7 @@ class Product
         return $stmt->execute([$id]);
     }
 
+    // Lấy 3 sản phẩm ngẫu nhiên
     public function getRandomProducts($limit = 3)
     {
         $query = "SELECT * FROM " . $this->table . " ORDER BY RAND() LIMIT " . intval($limit);
@@ -72,11 +73,12 @@ class Product
     // Lấy sản phẩm đang giảm giá với thời gian còn lại
     public function getDiscountProduct()
     {
-        $query = "SELECT * FROM " . $this->table . " WHERE discount IS NOT NULL AND discount_end_time > NOW() ORDER BY RAND() LIMIT 1";
+        $query = "SELECT * FROM " . $this->table . " WHERE discount IS NOT NULL AND discount_end_time > NOW()";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getCategories()
     {
         $query = "SELECT * FROM categories";
@@ -84,6 +86,7 @@ class Product
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getProductsByCategory($category_id)
     {
         $query = "SELECT * FROM " . $this->table . " WHERE category_id = :category_id";

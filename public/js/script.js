@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const modalHtml = `
             <div class="modal" id="loginModal" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);">
                 <div style="background: #fff; padding: 20px; max-width: 500px; margin: 100px auto; border-radius: 8px;">
-                    <h3>Please log in to add items to your cart</h3>
+                    <h3>Please log in to add items to your cart.</h3>
                     <p>To add products to your cart, you need to log in. You can also continue browsing the product details.</p>
                     <a href="/index.php?page=login" class="btn btn-primary">Log In</a>
                     <button id="continueBrowsing" class="btn btn-secondary">Continue Browsing</button>
