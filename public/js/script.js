@@ -1,13 +1,21 @@
+// navbar đối với giao diện cửa sổ nhỏ
 document.getElementById('navbar-toggler').addEventListener('click', function () {
     document.getElementById('mobile-menu').classList.toggle('hidden');
 });
 
-// Toggle user dropdown
-document.getElementById('user-dropdown-toggle').addEventListener('click', function () {
-    document.getElementById('user-dropdown').classList.toggle('hidden');
-});
-// public/js/script.js
+// Khi đăng nhập thành công sẽ thay đổi navbar
+const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+if (userDropdownToggle) {
+    userDropdownToggle.addEventListener('click', function () {
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userDropdown) {
+            userDropdown.classList.toggle('hidden');
+        }
+    });
+}
 
+
+// Xử lý việc thêm SP vào giỏ với Ajax (không tải lại trang)
 document.addEventListener("DOMContentLoaded", function () {
     const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
 
@@ -71,3 +79,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+// Hiển thị thông báo đăng xuất
+function showLogoutModal() {
+    document.getElementById('logout-modal').classList.remove('hidden');
+}
+
+// Check the URL for 'logout=success' and trigger the modal
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'success') {
+        showLogoutModal();  // Show modal if logout was successful
+    }
+});

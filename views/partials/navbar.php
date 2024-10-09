@@ -1,8 +1,6 @@
-
-
 <nav class="bg-red-600 text-white shadow-lg navbar">
   <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    
+
     <!-- Logo and Brand Name -->
     <div class="flex items-center space-x-3">
       <img src="/images/logo-removebg.png" alt="Pizza Store" class="h-12 w-12">
@@ -32,7 +30,8 @@
       <?php if (isset($_SESSION['user_name'])): ?>
         <!-- User is logged in -->
         <div class="relative">
-          <button class="flex items-center space-x-2 hover:text-yellow-300 transition duration-300 focus:outline-none" id="user-dropdown-toggle">
+          <button class="flex items-center space-x-2 hover:text-yellow-300 transition duration-300 focus:outline-none"
+            id="user-dropdown-toggle">
             <i class="fas fa-user"></i>
             <span><?= htmlspecialchars($_SESSION['user_name']) ?></span>
           </button>
@@ -45,7 +44,6 @@
         <!-- User is not logged in -->
         <a href="/index.php?page=login" class="hover:text-yellow-300 transition duration-300">Login</a>
       <?php endif; ?>
-      
     </div>
   </div>
 
@@ -60,4 +58,3 @@
     </ul>
   </div>
 </nav>
-

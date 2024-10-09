@@ -90,3 +90,18 @@ $discountProduct = $productModel->getDiscountProduct();
     <?php endforeach; ?>
   </div>
 </div>
+
+<div id="logout-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg max-w-md p-6 text-center">
+    <h2 class="text-2xl font-bold mb-4">Bạn đã đăng xuất thành công!</h2>
+    <p class="mb-6 text-gray-600">Nếu muốn đặt hàng, xin hãy Đăng nhập hoặc Đăng ký.</p>
+    <div class="flex justify-center space-x-4">
+      <a href="/index.php?page=login" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">
+        Đăng nhập
+      </a>
+      <a href="/index.php?page=home" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200">
+        Tiếp tục ở trang chủ
+      </a>
+    </div>
+  </div>
+</div>
