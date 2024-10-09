@@ -14,6 +14,17 @@ if (userDropdownToggle) {
     });
 }
 
+// Mobile User Dropdown Toggle
+const mobileUserDropdownToggle = document.getElementById('mobile-user-dropdown-toggle');
+if (mobileUserDropdownToggle) {
+    mobileUserDropdownToggle.addEventListener('click', function () {
+        const mobileUserDropdown = document.getElementById('mobile-user-dropdown');
+        if (mobileUserDropdown) {
+            mobileUserDropdown.classList.toggle('hidden');
+        }
+    });
+}
+
 
 // Xử lý việc thêm SP vào giỏ với Ajax (không tải lại trang)
 document.addEventListener("DOMContentLoaded", function () {

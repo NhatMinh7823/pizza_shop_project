@@ -27,30 +27,6 @@ $totalAmount = 0;
 foreach ($cartItems as $item) {
   $totalAmount += $item['price'] * $item['quantity'];
 }
-?>
-<h1 class="text-center mt-4">Checkout</h1>
-
-<div class="container">
-  <form method="POST" action="/index.php?page=checkout">
-    <h2>Billing Details</h2>
-    <div class="form-group">
-      <label for="address">Address</label>
-      <textarea name="address" id="address" class="form-control" required></textarea>
-    </div>
-    <h2>Payment Method</h2>
-    <div class="form-group">
-      <select name="payment_method" class="form-control" required>
-        <option value="credit_card">Credit Card</option>
-        <option value="paypal">PayPal</option>
-        <option value="cash_on_delivery">Cash on Delivery</option>
-      </select>
-    </div>
-    <h3>Total Amount: $<?= number_format($totalAmount, 2) ?></h3>
-    <button type="submit" name="checkout" class="btn btn-success">Place Order</button>
-  </form>
-</div>
-
-<?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
   $address = $_POST['address'];
   $payment_method = $_POST['payment_method'];
@@ -84,3 +60,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
   exit();
 }
 ?>
+<h1 class="text-center mt-4">Checkout</h1>
+
+<div class="container">
+  <form method="POST" action="/index.php?page=checkout">
+    <h2>Billing Details</h2>
+    <div class="form-group">
+      <label for="address">Address</label>
+      <textarea name="address" id="address" class="form-control" required></textarea>
+    </div>
+    <h2>Payment Method</h2>
+    <div class="form-group">
+      <select name="payment_method" class="form-control" required>
+        <option value="credit_card">Credit Card</option>
+        <option value="paypal">PayPal</option>
+        <option value="cash_on_delivery">Cash on Delivery</option>
+      </select>
+    </div>
+    <h3>Total Amount: $<?= number_format($totalAmount, 2) ?></h3>
+    <button type="submit" name="checkout" class="btn btn-success">Place Order</button>
+  </form>
+</div>

@@ -1,13 +1,10 @@
 <?php
+require_once '../controllers/CartController.php';
+require_once '../config.php'; // Kết nối CSDL
 if (!isset($_SESSION['user_id'])) {
     header("Location: /index.php?page=login"); // Điều hướng về trang đăng nhập
     exit();
 }
-?>
-<?php
-require_once '../controllers/CartController.php';
-require_once '../config.php'; // Kết nối CSDL
-
 // Khởi tạo CartController
 $cartController = new CartController($conn);
 

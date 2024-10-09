@@ -1,19 +1,8 @@
 <?php
-if (isset($_POST['logout'])) {
-  // Destroy session to log out the user
-  session_unset();
-  session_destroy();
-  // Redirect to the home page but with a URL parameter to show the modal
-  header("Location: /index.php?page=home&logout=success");
-  exit();
-}
-// Check if the user is logged in, if not redirect to login page
 if (!isset($_SESSION['user_name']) || !isset($_SESSION['user_email'])) {
   header("Location: /index.php?page=login");
   exit();
 }
-
-
 ?>
 
 <!-- Profile Section -->

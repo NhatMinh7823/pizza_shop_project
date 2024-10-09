@@ -1,15 +1,22 @@
 <?php
-// public/index.php
-
-// Khởi động session
+ob_start();
 session_start();
 
 // Include file cấu hình (kết nối database)
 require_once '../config.php';
-
+// Kiểm tra nếu bấm đăng xuất
+if (isset($_POST['logout'])) {
+    // Destroy session to log out the user
+    session_unset();
+    session_destroy();
+    // Redirect to the home page but with a URL parameter to show the modal
+    header("Location: /index.php?page=home&logout=success");
+    exit();
+}
 // Include các phần như header
 require_once '../includes/header.php';
 require_once '../views/partials/navbar.php';
+
 
 // Routing đơn giản thông qua tham số "page"
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
@@ -52,3 +59,4 @@ switch ($page) {
 }
 
 require_once '../includes/footer.php';
+ob_end_flush();  

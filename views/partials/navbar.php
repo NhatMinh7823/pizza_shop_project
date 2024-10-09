@@ -22,7 +22,8 @@
       <a href="/index.php?page=products" class="hover:text-yellow-300 transition duration-300">Products</a>
       <a href="/index.php?page=cart" class="relative hover:text-yellow-300 transition duration-300">
         <i class="fas fa-shopping-cart"></i> Cart
-        <!-- <span class="bg-yellow-300 text-red-600 font-bold rounded-full text-xs px-2 py-1 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">0</span> -->
+        <span class="bg-yellow-300 text-red-600 font-bold rounded-full text-xs px-2 py-1 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">0</span>
+
       </a>
       <a href="/index.php?page=contact" class="hover:text-yellow-300 transition duration-300">Contact</a>
 
@@ -36,7 +37,12 @@
           </button>
           <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg">
             <a href="/index.php?page=account" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
-            <a href="/index.php?page=logout" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+            <!-- Logout form -->
+            <form method="POST" id="logout-form">
+              <button type="submit" name="logout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">
+                Logout
+              </button>
+            </form>
           </div>
         </div>
       <?php else: ?>
@@ -53,7 +59,23 @@
       <li><a href="/index.php?page=products" class="block px-3 py-2 text-white hover:bg-yellow-400">Products</a></li>
       <li><a href="/index.php?page=cart" class="block px-3 py-2 text-white hover:bg-yellow-400">Cart</a></li>
       <li><a href="/index.php?page=contact" class="block px-3 py-2 text-white hover:bg-yellow-400">Contact</a></li>
+      <?php if (isset($_SESSION['user_name'])): ?>
+        <button class="block px-3 py-2 text-white hover:bg-yellow-400" id="mobile-user-dropdown-toggle">
+            <i class="fas fa-user"></i>
+            <span><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+          </button>
+          <div id="mobile-user-dropdown" class="hidden">
+            <a href="/index.php?page=account" class="block px-3 py-2 text-white hover:bg-yellow-400">Profile</a>
+            <!-- Logout form for mobile -->
+            <form method="POST" id="mobile-logout-form">
+              <button type="submit" name="logout" class="block w-full text-left px-3 py-2 text-white hover:bg-yellow-400">
+                Logout
+              </button>
+            </form>
+          </div>
+      <?php else: ?>
       <li><a href="/index.php?page=login" class="block px-3 py-2 text-white hover:bg-yellow-400">Login</a></li>
+      <?php endif; ?>
     </ul>
   </div>
 </nav>
