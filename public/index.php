@@ -13,6 +13,7 @@ if (isset($_POST['logout'])) {
     header("Location: /index.php?page=home&logout=success");
     exit();
 }
+
 // Include các phần như header
 require_once '../includes/header.php';
 require_once '../views/partials/navbar.php';
@@ -49,6 +50,18 @@ switch ($page) {
         break;
     case 'order-success':
         include '../pages/order-success.php';
+        break;
+    case 'admin':
+        include '../admin/list-products.php';
+        break;
+    case 'add':
+        include '../admin/add-product.php';
+        break;
+    case 'edit':
+        include '../admin/edit-product.php';
+        break;
+    case 'delete':
+        include '../admin/delete-product.php';
         break;
     default:
         include '../pages/404.php'; // Trang lỗi 404

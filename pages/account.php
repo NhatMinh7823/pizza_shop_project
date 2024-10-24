@@ -12,12 +12,19 @@ if (!isset($_SESSION['user_name'])) {
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 $user_email = $_SESSION['user_email'];
+$user_role = $_SESSION['user_role'];
 
 // Khởi tạo OrderController
 $orderController = new OrderController($conn);
 
 // Lấy danh sách đơn hàng của người dùng
 $orderItems = $orderController->getOrdersByUserId($user_id);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_panel'])) {
+  if ($user_role === 'admin') {
+    header("Location: /index.php?page=admin"); // Điều hướng đến trang quản lý sản phẩm
+    exit();
+  }
+}
 ?>
 
 <h1 class="text-center mt-4">Your Profile</h1>
@@ -30,6 +37,13 @@ $orderItems = $orderController->getOrdersByUserId($user_id);
       <h5 class="card-title">Email: <?= htmlspecialchars($user_email) ?></h5>
     </div>
   </div>
+
+  <!-- Thêm nút kiểm tra vai trò admin -->
+  <?php if ($user_role === 'admin'): ?>
+    <form method="POST" action="/index.php?page=account">
+      <button type="submit" name="admin_panel" class="btn btn-warning">Admin Panel</button>
+    </form>
+  <?php endif; ?>
 
   <!-- Hiển thị danh sách đơn hàng -->
   <?php if (!empty($orderItems)): ?>
