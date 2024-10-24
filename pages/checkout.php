@@ -22,6 +22,7 @@ if (empty($cartItems)) {
   header("Location: /index.php?page=cart&error=empty");
   exit();
 }
+
 // Calculate total amount
 $totalAmount = 0;
 foreach ($cartItems as $item) {
@@ -31,35 +32,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
   $address = $_POST['address'];
   $payment_method = $_POST['payment_method'];
 
-  // Call the OrderController to create a new order
+  // Tạo đơn hàng và nhận order_id
   $order_id = $orderController->createOrder($user_id, $totalAmount, $payment_method, $address);
 
-  foreach ($cartItems as $item) {
-    // Check if product_id is correctly populated
-    if (!isset($item['product_id']) || empty($item['product_id'])) {
-      echo "Product ID is missing for an item!";
-      var_dump($item); // Debug output
-      exit();
+  if ($order_id) {
+    // Thêm các sản phẩm vào đơn hàng sau khi order_id đã được tạo
+    foreach ($cartItems as $item) {
+      if (!isset($item['product_id']) || empty($item['product_id'])) {
+        echo "Product ID is missing or invalid for an item!";
+        exit();
+      }
+
+      // Thêm từng sản phẩm vào đơn hàng
+      $orderController->addOrderItem($order_id, $item['product_id'], $item['quantity'], $item['price']);
     }
 
-    // Add the order item as before
-    $orderController->addOrderItem($order_id, $item['product_id'], $item['quantity'], $item['price']);
+    // Xóa giỏ hàng sau khi đã đặt hàng thành công
+    $cartController->clearCart($user_id);
+
+    // Điều hướng đến trang thành công
+    header("Location: /index.php?page=order-success&order_id=$order_id");
+    exit();
+  } else {
+    echo "Failed to create order. Please try again.";
+    exit();
   }
-
-
-  // Save order items
-  foreach ($cartItems as $item) {
-    $orderController->addOrderItem($order_id, $item['product_id'], $item['quantity'], $item['price']);
-  }
-
-  // Clear the cart after successful order placement
-  $cartController->clearCart($user_id);
-
-  // Redirect to the order success page
-  header("Location: /index.php?page=order-success&order_id=$order_id");
-  exit();
 }
 ?>
+
 <h1 class="text-center mt-4">Checkout</h1>
 
 <div class="container">

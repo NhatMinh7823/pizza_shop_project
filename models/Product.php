@@ -27,6 +27,24 @@ class Product
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Lấy sản phẩm theo tên danh mục
+    public function getProductsByCategoryName($category_name)
+    {
+        $query = "SELECT * FROM " . $this->table . " WHERE category_name = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$category_name]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy các danh mục duy nhất
+    public function getDistinctCategories()
+    {
+        $query = "SELECT DISTINCT category_name FROM " . $this->table;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Lấy sản phẩm theo ID
     public function getProductById($id)
     {
@@ -37,19 +55,19 @@ class Product
     }
 
     // Thêm sản phẩm mới
-    public function createProduct($name, $description, $price, $image, $category_id)
+    public function createProduct($name, $description, $price, $image, $category_name)
     {
-        $query = "INSERT INTO " . $this->table . " (name, description, price, image, category_id) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO " . $this->table . " (name, description, price, image, category_name) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$name, $description, $price, $image, $category_id]);
+        return $stmt->execute([$name, $description, $price, $image, $category_name]);
     }
 
     // Cập nhật sản phẩm
-    public function updateProduct($id, $name, $description, $price, $image, $category_id)
+    public function updateProduct($id, $name, $description, $price, $image, $category_name)
     {
-        $query = "UPDATE " . $this->table . " SET name = ?, description = ?, price = ?, image = ?, category_id = ? WHERE id = ?";
+        $query = "UPDATE " . $this->table . " SET name = ?, description = ?, price = ?, image = ?, category_name = ? WHERE id = ?";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$name, $description, $price, $image, $category_id, $id]);
+        return $stmt->execute([$name, $description, $price, $image, $category_name, $id]);
     }
 
     // Xóa sản phẩm
@@ -69,29 +87,11 @@ class Product
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
     // Lấy sản phẩm đang giảm giá với thời gian còn lại
     public function getDiscountProduct()
     {
         $query = "SELECT * FROM " . $this->table . " WHERE discount IS NOT NULL AND discount_end_time > NOW()";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getCategories()
-    {
-        $query = "SELECT * FROM categories";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getProductsByCategory($category_id)
-    {
-        $query = "SELECT * FROM " . $this->table . " WHERE category_id = :category_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

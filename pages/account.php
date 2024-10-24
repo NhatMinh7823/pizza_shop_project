@@ -1,101 +1,77 @@
 <?php
-if (!isset($_SESSION['user_name']) || !isset($_SESSION['user_email'])) {
+require_once '../config.php'; // Kết nối CSDL
+require_once '../controllers/OrderController.php'; // Controller xử lý đơn hàng
+
+// Kiểm tra nếu người dùng đã đăng nhập
+if (!isset($_SESSION['user_name'])) {
   header("Location: /index.php?page=login");
   exit();
 }
+
+// Lấy thông tin người dùng từ session
+$user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
+$user_email = $_SESSION['user_email'];
+
+// Khởi tạo OrderController
+$orderController = new OrderController($conn);
+
+// Lấy danh sách đơn hàng của người dùng
+$orderItems = $orderController->getOrdersByUserId($user_id);
 ?>
 
-<!-- Profile Section -->
-<div class="container mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg max-w-lg">
-  <h2 class="text-3xl font-bold text-center mb-6">Profile</h2>
+<h1 class="text-center mt-4">Your Profile</h1>
 
-  <div class="space-y-4">
-    <div class="flex items-center space-x-3">
-      <i class="fas fa-user text-xl"></i>
-      <div>
-        <p class="font-bold text-gray-700">Name</p>
-        <p><?= htmlspecialchars($_SESSION['user_name']) ?></p>
-      </div>
+<div class="container">
+  <!-- Hiển thị thông tin tên và email -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Name: <?= htmlspecialchars($user_name) ?></h5>
+      <h5 class="card-title">Email: <?= htmlspecialchars($user_email) ?></h5>
     </div>
-
-    <div class="flex items-center space-x-3">
-      <i class="fas fa-envelope text-xl"></i>
-      <div>
-        <p class="font-bold text-gray-700">Email</p>
-        <p><?= htmlspecialchars($_SESSION['user_email']) ?></p>
-      </div>
-    </div>
-
-    <!-- Lịch sử đơn hàng -->
-    <h3 class="text-2xl font-bold text-center mt-6">Order History</h3>
-    <div class="mt-4">
-      <?php
-      // Lấy user_id từ session
-      $user_id = $_SESSION['user_id'];
-
-      // Truy vấn đơn hàng từ bảng orders
-      $query_orders = "SELECT * FROM orders WHERE user_id = :id";
-      $stmt_orders = $conn->prepare($query_orders);
-      $stmt_orders->bindParam(':id', $user_id, PDO::PARAM_INT);
-      $stmt_orders->execute();
-      $orders = $stmt_orders->fetchAll(PDO::FETCH_ASSOC);
-
-      // Kiểm tra nếu có kết quả trả về
-      if (count($orders) > 0):
-      ?>
-        <ul class="list-disc pl-5">
-          <?php foreach ($orders as $order): ?>
-            <li>
-              <strong>Order ID:</strong> <?= $order['id'] ?><br>
-              <strong>Total:</strong> $<?= number_format($order['total'], 2) ?><br>
-              <strong>Payment Method:</strong> <?= ucfirst($order['payment_method']) ?><br>
-              <strong>Status:</strong> <?= ucfirst($order['status']) ?><br>
-              <strong>Address:</strong> <?= htmlspecialchars($order['address']) ?><br>
-              <strong>Order Datetime:</strong> <?= $order['created_at'] ?><br>
-
-              <!-- Truy vấn chi tiết đơn hàng từ bảng order_items -->
-              <?php
-              $query_order_items = "SELECT * FROM order_items WHERE order_id = :order_id";
-              $stmt_items = $conn->prepare($query_order_items);
-              $stmt_items->bindParam(':order_id', $order['id'], PDO::PARAM_INT);
-              $stmt_items->execute();
-              $order_items = $stmt_items->fetchAll(PDO::FETCH_ASSOC);
-              ?>
-              <table class="table-auto w-full text-left mt-2">
-                <thead>
-                  <tr>
-                    <th class="px-2 py-1">Product Name</th>
-                    <th class="px-2 py-1">Quantity</th>
-                    <th class="px-2 py-1">Price</th>
-                    <th class="px-2 py-1">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php foreach ($order_items as $item): ?>
-                    <tr>
-                      <td class="border px-2 py-1"><?= htmlspecialchars($item['product_id']) ?></td>
-                      <td class="border px-2 py-1"><?= $item['quantity'] ?></td>
-                      <td class="border px-2 py-1">$<?= number_format($item['price'], 2) ?></td>
-                      <td class="border px-2 py-1">$<?= number_format($item['price'] * $item['quantity'], 2) ?></td>
-                    </tr>
-                  <?php endforeach; ?>
-                </tbody>
-              </table>
-            </li>
-            <hr class="my-4">
-          <?php endforeach; ?>
-        </ul>
-      <?php else: ?>
-        <p>No orders found.</p>
-      <?php endif; ?>
-    </div>
-
-    <!-- Logout Button -->
-    <form method="POST" id="logout-form" class="flex justify-center">
-      <button type="submit" name="logout"
-        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200">
-        Logout
-      </button>
-    </form>
   </div>
+
+  <!-- Hiển thị danh sách đơn hàng -->
+  <?php if (!empty($orderItems)): ?>
+    <h2 class="text-center mt-4">Your Orders</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Product Name</th> <!-- Thêm cột tên sản phẩm -->
+          <th>Quantity</th> <!-- Thêm cột số lượng -->
+          <th>Price</th> <!-- Thêm cột giá -->
+          <th>Total</th>
+          <th>Payment Method</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($orderItems as $order): ?>
+          <tr>
+            <td><?= htmlspecialchars($order['order_id']) ?></td> <!-- Sử dụng order_id mới -->
+            <td><?= htmlspecialchars($order['product_name']) ?></td> <!-- Hiển thị tên sản phẩm -->
+            <td><?= htmlspecialchars($order['quantity']) ?></td> <!-- Hiển thị số lượng -->
+            <td>$<?= number_format($order['price'], 2) ?></td> <!-- Hiển thị giá -->
+            <td>$<?= number_format($order['price'] * $order['quantity'], 2) ?></td> <!-- Tính tổng giá -->
+            <td><?= htmlspecialchars(ucfirst($order['payment_method'])) ?></td>
+            <td><?= htmlspecialchars(ucfirst($order['status'])) ?></td>
+            <td><?= htmlspecialchars($order['created_at']) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  <?php else: ?>
+    <div class="alert alert-info text-center">
+      <p>You haven't placed any orders yet.</p>
+      <a href="/index.php?page=products" class="btn btn-primary mt-3">Go to Products</a>
+    </div>
+  <?php endif; ?>
+
 </div>
+
+<!-- Logout Button -->
+<form method="POST" class="text-center mt-4">
+  <button type="submit" name="logout" class="btn btn-danger">Logout</button>
+</form>

@@ -40,7 +40,7 @@ $orderDetails = $orderController->getOrderDetails($order_id, $user_id);
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Product</th>
+          <th>Product Name</th>
           <th>Quantity</th>
           <th>Price</th>
           <th>Total</th>
@@ -48,15 +48,12 @@ $orderDetails = $orderController->getOrderDetails($order_id, $user_id);
       </thead>
       <tbody>
         <?php foreach ($orderDetails['items'] as $item): ?>
+          <!-- Thay đổi để hiển thị tất cả các sản phẩm trong đơn hàng -->
           <tr>
-            <td>
-              <img src="/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>"
-                width="50">
-              <?= htmlspecialchars($item['name']) ?>
-            </td>
-            <td><?= htmlspecialchars($item['quantity']) ?></td>
-            <td>$<?= htmlspecialchars($item['price']) ?></td>
-            <td>$<?= htmlspecialchars($item['price'] * $item['quantity']) ?></td>
+            <td><?= htmlspecialchars($item['product_name']) ?></td> <!-- Hiển thị tên sản phẩm -->
+            <td><?= htmlspecialchars($item['quantity']) ?></td> <!-- Hiển thị số lượng sản phẩm -->
+            <td>$<?= htmlspecialchars($item['price']) ?></td> <!-- Hiển thị giá sản phẩm -->
+            <td>$<?= htmlspecialchars($item['price'] * $item['quantity']) ?></td> <!-- Hiển thị tổng giá -->
           </tr>
         <?php endforeach; ?>
       </tbody>

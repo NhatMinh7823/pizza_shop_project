@@ -10,20 +10,25 @@ class OrderController
     $this->orderModel = new Order($db);
   }
 
-  // Create a new order
+  // Tạo đơn hàng mới
   public function createOrder($user_id, $total, $payment_method, $address)
   {
     return $this->orderModel->createOrder($user_id, $total, $payment_method, $address);
   }
 
-  // Add items to an order
+  // Thêm sản phẩm vào đơn hàng
   public function addOrderItem($order_id, $product_id, $quantity, $price)
   {
-    return $this->orderModel->addOrderItem($order_id, $product_id, $quantity, $price);
+    $this->orderModel->addOrderItem($order_id, $product_id, $quantity, $price);
   }
+
   public function getOrderDetails($order_id, $user_id)
   {
     return $this->orderModel->getOrderDetails($order_id, $user_id);
   }
 
+  public function getOrdersByUserId($user_id)
+  {
+    return $this->orderModel->getOrdersByUserId($user_id);
+  }
 }

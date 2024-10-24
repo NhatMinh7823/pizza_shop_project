@@ -44,9 +44,6 @@ switch ($page) {
     case 'account':
         include '../pages/account.php';
         break;
-    case 'contact':
-        include '../pages/contact.php';
-        break;
     case 'register':
         include '../pages/register.php';
         break;

@@ -10,50 +10,41 @@ class Order
         $this->conn = $db;
     }
 
-    // Create a new order
+    // Tạo đơn hàng mới
     public function createOrder($user_id, $total, $payment_method, $address)
     {
-        $query = "INSERT INTO " . $this->table . " (user_id, total, payment_method, address) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO orders (user_id, total, payment_method, address, status) VALUES (?, ?, ?, ?, 'pending')";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$user_id, $total, $payment_method, $address]);
 
-        // Return the last inserted order ID
-        return $this->conn->lastInsertId();
+        return $this->conn->lastInsertId(); // Trả về order_id vừa tạo
     }
 
-    // Add an item to an order
+    // Thêm sản phẩm vào đơn hàng
     public function addOrderItem($order_id, $product_id, $quantity, $price)
     {
         $query = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$order_id, $product_id, $quantity, $price]);
+        $stmt->execute([$order_id, $product_id, $quantity, $price]);
     }
+
+    // Lấy thông tin chi tiết đơn hàng
     public function getOrderDetails($order_id, $user_id)
     {
-        // Fetch order details
         $query = "SELECT * FROM orders WHERE id = ? AND user_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$order_id, $user_id]);
-        $order = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Trả về thông tin đơn hàng
 
-        if (!$order) {
-            return null; // If no order is found, return null
-        }
-
-        // Fetch order items and group them by product_id
-        $query = "SELECT oi.product_id, p.name, p.image, SUM(oi.quantity) as quantity, oi.price 
-              FROM order_items oi
-              JOIN products p ON oi.product_id = p.id
-              WHERE oi.order_id = ?
-              GROUP BY oi.product_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$order_id]);
-        $orderItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $order['items'] = $orderItems; // Attach items to the order array
-
-        return $order;
+        // Nếu cần lấy thông tin sản phẩm trong đơn hàng, nên thực hiện một truy vấn khác từ bảng order_items
     }
 
-
+    public function getOrdersByUserId($user_id)
+    {
+        $query = "SELECT * FROM " . $this->table . " WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
+

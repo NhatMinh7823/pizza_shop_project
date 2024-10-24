@@ -25,7 +25,6 @@
         <span class="bg-yellow-300 text-red-600 font-bold rounded-full text-xs px-2 py-1 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">0</span>
 
       </a>
-      <a href="/index.php?page=contact" class="hover:text-yellow-300 transition duration-300">Contact</a>
 
       <?php if (isset($_SESSION['user_name'])): ?>
         <!-- User is logged in -->
