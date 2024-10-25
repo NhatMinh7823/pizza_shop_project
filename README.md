@@ -10,6 +10,6 @@ Học kỳ 1, Năm học 2024-2025
 
 **MSSV 2**:         B2111809
 
-**Họ tên SV 2**:    LÊ NHẬT MINH test
+**Họ tên SV 2**:    LÊ NHẬT MINH
 
 **Lớp học phần**:   CT27501
