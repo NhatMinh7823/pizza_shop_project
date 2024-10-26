@@ -3,15 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Models\Order;
 
 class UserController extends Controller
 {
   protected $userModel;
-
+  protected $orderModel;
   public function __construct($conn)
   {
     parent::__construct();
     $this->userModel = new User($conn);
+    $this->orderModel = new Order($conn);
   }
 
   public function showLoginForm()
@@ -49,6 +51,19 @@ class UserController extends Controller
       exit;
     }
   }
+  // public function account()
+  // {
+  //   if (!isset($_SESSION['user_id'])) {
+  //     header('Location: ' . url('/login'));
+  //     exit;
+  //   }
+
+  //   $this->sendPage('user/account', [
+  //     'user_name' => $_SESSION['user_name'],
+  //     'user_email' => $_SESSION['user_email'],
+  //     'user_role' => $_SESSION['user_role'],
+  //   ]);
+  // }
   public function account()
   {
     if (!isset($_SESSION['user_id'])) {
@@ -56,10 +71,23 @@ class UserController extends Controller
       exit;
     }
 
+    $user_id = $_SESSION['user_id'];
+    $user_name = $_SESSION['user_name'];
+    $user_email = $_SESSION['user_email'];
+    $user_role = $_SESSION['user_role'];
+    $user_phone = $_SESSION['user_phone'] ?? 'Chưa thêm';
+    $user_address = $_SESSION['user_address'] ?? 'Chưa thêm';
+
+    // Lấy lịch sử đơn hàng của người dùng
+    $orderHistory = $this->orderModel->getUserOrders($user_id);
+
     $this->sendPage('user/account', [
-      'user_name' => $_SESSION['user_name'],
-      'user_email' => $_SESSION['user_email'],
-      'user_role' => $_SESSION['user_role'],
+      'user_name' => $user_name,
+      'user_email' => $user_email,
+      'user_role' => $user_role,
+      'user_phone' => $user_phone,
+      'user_address' => $user_address,
+      'orderHistory' => $orderHistory
     ]);
   }
   public function showRegisterForm()

@@ -4,42 +4,84 @@ namespace App\Controllers;
 
 use App\Models\Cart;
 
-class CartController
+class CartController extends Controller
 {
-    private $cartModel;
+    protected $cartModel;
 
-    public function __construct($db)
+    public function __construct($conn)
     {
-        $this->cartModel = new Cart($db);
+        parent::__construct();
+        $this->cartModel = new Cart($conn);
     }
 
-    // Lấy danh sách sản phẩm trong giỏ hàng
-    public function viewCart($user_id)
+    public function index()
     {
-        return $this->cartModel->getCartItems($user_id);
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . url('/login'));
+            exit;
+        }
+
+        $cartItems = $this->cartModel->getCartItems($_SESSION['user_id']);
+        $_SESSION['cart_count'] = $this->calculateTotalQuantity($cartItems); // Cập nhật tổng số lượng sản phẩm
+        $this->sendPage('cart', ['cartItems' => $cartItems]);
     }
 
-    // Thêm sản phẩm vào giỏ hàng
-    public function addToCart($user_id, $product_id, $quantity)
+    public function addToCart()
     {
-        return $this->cartModel->addToCart($user_id, $product_id, $quantity);
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . url('/login'));
+            exit;
+        }
+
+        $product_id = $_POST['product_id'];
+        $quantity = $_POST['quantity'] ?? 1;
+
+        // Thêm sản phẩm vào giỏ hàng
+        $this->cartModel->addToCart($_SESSION['user_id'], $product_id, $quantity);
+
+        // Cập nhật tổng số lượng sản phẩm trong giỏ hàng
+        $cartItems = $this->cartModel->getCartItems($_SESSION['user_id']);
+        $_SESSION['cart_count'] = $this->calculateTotalQuantity($cartItems);
+
+        header('Location: ' . url('/cart'));
+        exit;
     }
 
-    // Cập nhật số lượng sản phẩm trong giỏ hàng
-    public function updateCartItem($cart_id, $quantity)
+    public function updateCartItem()
     {
-        return $this->cartModel->updateCartItem($cart_id, $quantity);
+        $cart_id = $_POST['cart_id'];
+        $quantity = $_POST['quantity'];
+
+        $this->cartModel->updateCartItem($cart_id, $quantity);
+
+        // Cập nhật tổng số lượng sản phẩm trong giỏ hàng
+        $cartItems = $this->cartModel->getCartItems($_SESSION['user_id']);
+        $_SESSION['cart_count'] = $this->calculateTotalQuantity($cartItems);
+
+        header('Location: ' . url('/cart'));
+        exit;
     }
 
-    // Xóa sản phẩm khỏi giỏ hàng
-    public function deleteCartItem($cart_id)
+    public function deleteCartItem()
     {
-        return $this->cartModel->deleteCartItem($cart_id);
+        $cart_id = $_POST['cart_id'];
+
+        $this->cartModel->deleteCartItem($cart_id);
+
+        // Cập nhật tổng số lượng sản phẩm trong giỏ hàng
+        $cartItems = $this->cartModel->getCartItems($_SESSION['user_id']);
+        $_SESSION['cart_count'] = $this->calculateTotalQuantity($cartItems);
+
+        header('Location: ' . url('/cart'));
+        exit;
     }
 
-    // Xóa toàn bộ giỏ hàng của người dùng
-    public function clearCart($user_id)
+    private function calculateTotalQuantity($cartItems)
     {
-        return $this->cartModel->clearUserCart($user_id);
+        $totalQuantity = 0;
+        foreach ($cartItems as $item) {
+            $totalQuantity += $item['quantity']; // Giả sử mỗi mục có thuộc tính 'quantity'
+        }
+        return $totalQuantity;
     }
 }

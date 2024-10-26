@@ -1,34 +1,70 @@
 <?php
-require_once '../models/Order.php';
 
-class OrderController
+namespace App\Controllers;
+
+use App\Models\Order;
+use App\Models\Cart;
+use App\Models\Product;
+
+class OrderController extends Controller
 {
-  private $orderModel;
+  protected $orderModel;
+  protected $cartModel;
+  protected $productModel;
 
-  public function __construct($db)
+  public function __construct($conn)
   {
-    $this->orderModel = new Order($db);
+    parent::__construct();
+    $this->orderModel = new Order($conn);
+    $this->cartModel = new Cart($conn);
+    $this->productModel = new Product($conn);
   }
 
-  // Tạo đơn hàng mới
-  public function createOrder($user_id, $total, $payment_method, $address)
+  public function checkout()
   {
-    return $this->orderModel->createOrder($user_id, $total, $payment_method, $address);
+    if (!isset($_SESSION['user_id'])) {
+      header('Location: /login');
+      exit;
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $cartItems = $this->cartModel->getCartItemsForCheckout($user_id);
+    $total = array_sum(array_column($cartItems, 'total_price'));
+
+    $this->sendPage('/checkout', [
+      'cartItems' => $cartItems,
+      'total' => $total
+    ]);
   }
 
-  // Thêm sản phẩm vào đơn hàng
-  public function addOrderItem($order_id, $product_id, $quantity, $price)
+  public function placeOrder()
   {
-    $this->orderModel->addOrderItem($order_id, $product_id, $quantity, $price);
+    if (!isset($_SESSION['user_id'])) {
+      header('Location: /login');
+      exit;
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $address = $_POST['address'];
+    $payment_method = $_POST['payment_method'];
+    $cartItems = $this->cartModel->getCartItemsForCheckout($user_id);
+
+    $total = array_sum(array_column($cartItems, 'total_price'));
+
+    try {
+      $this->orderModel->createOrder($user_id, $total, $address, $payment_method, $cartItems);
+      $this->cartModel->clearUserCart($user_id);
+
+      header('Location: /order-success');
+      exit;
+    } catch (\Exception $e) {
+      echo "Order processing failed: " . $e->getMessage();
+    }
   }
 
-  public function getOrderDetails($order_id, $user_id)
+  public function orderSuccess()
   {
-    return $this->orderModel->getOrderDetails($order_id, $user_id);
+    $this->sendPage('/order-success');
   }
-
-  public function getOrdersByUserId($user_id)
-  {
-    return $this->orderModel->getOrdersByUserId($user_id);
-  }
+  
 }

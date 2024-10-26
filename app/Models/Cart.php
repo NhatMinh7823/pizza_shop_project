@@ -6,76 +6,84 @@ use PDO;
 
 class Cart
 {
-    private PDO $conn;
-    private string $table = 'cart';
-
-    private int $id;
-    private int $user_id;
-    private int $product_id;
-    private int $quantity;
-    private string $created_at;
-
-    public function __construct(PDO $db)
+    private $conn;
+    private static $table = 'cart';
+    public function __construct($conn)
     {
-        $this->conn = $db;
+        $this->conn = $conn;
     }
 
-    // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
-    public function getCartItems(int $user_id): array
+    // Lấy tất cả các sản phẩm trong giỏ hàng của người dùng
+    public function getCartItems($user_id)
     {
         $query = "SELECT c.id, c.product_id, c.quantity, p.name, p.price, p.image 
-                  FROM " . $this->table . " c 
+                  FROM cart c
                   JOIN products p ON c.product_id = p.id 
-                  WHERE c.user_id = ?";
+                  WHERE c.user_id = :user_id";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$user_id]);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getCartItemsForCheckout($user_id)
+    {
+        $sql = "SELECT c.product_id, c.quantity, p.name, p.price, (c.quantity * p.price) AS total_price 
+                FROM " . self::$table . " c
+                JOIN products p ON c.product_id = p.id
+                WHERE c.user_id = :user_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 
     // Thêm sản phẩm vào giỏ hàng
-    public function addToCart(int $user_id, int $product_id, int $quantity): bool
+    public function addToCart($user_id, $product_id, $quantity)
     {
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-        $query = "SELECT id FROM " . $this->table . " WHERE user_id = ? AND product_id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$user_id, $product_id]);
+        $query = "INSERT INTO cart (user_id, product_id, quantity) 
+                  VALUES (:user_id, :product_id, :quantity)
+                  ON DUPLICATE KEY UPDATE quantity = quantity + :quantity";
 
-        if ($stmt->rowCount() > 0) {
-            // Nếu sản phẩm đã có, tăng số lượng
-            $query = "UPDATE " . $this->table . " SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?";
-            $stmt = $this->conn->prepare($query);
-            return $stmt->execute([$quantity, $user_id, $product_id]);
-        } else {
-            // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
-            $query = "INSERT INTO " . $this->table . " (user_id, product_id, quantity) VALUES (?, ?, ?)";
-            $stmt = $this->conn->prepare($query);
-            return $stmt->execute([$user_id, $product_id, $quantity]);
-        }
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng
-    public function updateCartItem(int $cart_id, int $quantity): bool
+    public function updateCartItem($cart_id, $quantity)
     {
-        $query = "UPDATE " . $this->table . " SET quantity = ? WHERE id = ?";
+        $query = "UPDATE cart SET quantity = :quantity WHERE id = :cart_id";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$quantity, $cart_id]);
+        $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+        $stmt->bindParam(':cart_id', $cart_id, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 
     // Xóa sản phẩm khỏi giỏ hàng
-    public function deleteCartItem(int $cart_id): bool
+    public function deleteCartItem($cart_id)
     {
-        $query = "DELETE FROM " . $this->table . " WHERE id = ?";
+        $query = "DELETE FROM cart WHERE id = :cart_id";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$cart_id]);
+        $stmt->bindParam(':cart_id', $cart_id, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 
     // Xóa toàn bộ giỏ hàng của người dùng
-    public function clearUserCart(int $user_id): bool
+    public function clearUserCart($user_id)
     {
-        $query = "DELETE FROM " . $this->table . " WHERE user_id = ?";
+        $query = "DELETE FROM cart WHERE user_id = :user_id";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$user_id]);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 }
