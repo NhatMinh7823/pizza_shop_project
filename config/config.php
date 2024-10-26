@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // includes/config.php
-$host = 'localhost:3307';
+$host = 'localhost';
 $dbname = 'ct275_pizza_o';
 $username = 'root';
 $password = '';

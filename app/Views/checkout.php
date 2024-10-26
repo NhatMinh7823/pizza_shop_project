@@ -1,83 +1,38 @@
-<?php
-if (!isset($_SESSION['user_id'])) {
-  header("Location: /index.php?page=login"); // Điều hướng về trang đăng nhập
-  exit();
-}
+<?php $this->layout('shared/layout', ['title' => 'Checkout']) ?>
 
-require_once '../config.php';
-require_once '../controllers/CartController.php';
-require_once '../controllers/OrderController.php';
+<div class="container mx-auto my-5">
+    <h1 class="text-2xl font-bold mb-4">Checkout</h1>
 
-// Initialize controllers
-$cartController = new CartController($conn);
-$orderController = new OrderController($conn);
-
-// Get user_id from session
-$user_id = $_SESSION['user_id'];
-
-// Get cart items for the user
-$cartItems = $cartController->viewCart($user_id);
-if (empty($cartItems)) {
-  // Redirect to cart page with an error message
-  header("Location: /index.php?page=cart&error=empty");
-  exit();
-}
-
-// Calculate total amount
-$totalAmount = 0;
-foreach ($cartItems as $item) {
-  $totalAmount += $item['price'] * $item['quantity'];
-}
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
-  $address = $_POST['address'];
-  $payment_method = $_POST['payment_method'];
-
-  // Tạo đơn hàng và nhận order_id
-  $order_id = $orderController->createOrder($user_id, $totalAmount, $payment_method, $address);
-
-  if ($order_id) {
-    // Thêm các sản phẩm vào đơn hàng sau khi order_id đã được tạo
-    foreach ($cartItems as $item) {
-      if (!isset($item['product_id']) || empty($item['product_id'])) {
-        echo "Product ID is missing or invalid for an item!";
-        exit();
-      }
-
-      // Thêm từng sản phẩm vào đơn hàng
-      $orderController->addOrderItem($order_id, $item['product_id'], $item['quantity'], $item['price']);
-    }
-
-    // Xóa giỏ hàng sau khi đã đặt hàng thành công
-    $cartController->clearCart($user_id);
-
-    // Điều hướng đến trang thành công
-    header("Location: /index.php?page=order-success&order_id=$order_id");
-    exit();
-  } else {
-    echo "Failed to create order. Please try again.";
-    exit();
-  }
-}
-?>
-
-<h1 class="text-center mt-4">Checkout</h1>
-
-<div class="container">
-  <form method="POST" action="/index.php?page=checkout">
-    <h2>Billing Details</h2>
-    <div class="form-group">
-      <label for="address">Address</label>
-      <textarea name="address" id="address" class="form-control" required></textarea>
+    <div class="bg-white shadow-md rounded p-4 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+        <ul>
+            <?php foreach ($cartItems as $item): ?>
+                <li class="flex justify-between">
+                    <span><?= htmlspecialchars($item['name']) ?> x <?= $item['quantity'] ?></span>
+                    <span>$<?= htmlspecialchars($item['total_price']) ?></span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <hr class="my-4">
+        <div class="flex justify-between font-semibold">
+            <span>Total:</span>
+            <span>$<?= htmlspecialchars($total) ?></span>
+        </div>
     </div>
-    <h2>Payment Method</h2>
-    <div class="form-group">
-      <select name="payment_method" class="form-control" required>
-        <option value="credit_card">Credit Card</option>
-        <option value="paypal">PayPal</option>
-        <option value="cash_on_delivery">Cash on Delivery</option>
-      </select>
-    </div>
-    <h3>Total Amount: $<?= number_format($totalAmount, 2) ?></h3>
-    <button type="submit" name="checkout" class="btn btn-success">Place Order</button>
-  </form>
+
+    <form action="/place-order" method="POST">
+        <div class="mb-4">
+            <label for="address" class="block font-semibold">Shipping Address:</label>
+            <textarea name="address" id="address" rows="3" class="w-full border rounded p-2" required></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="payment_method" class="block font-semibold">Payment Method:</label>
+            <select name="payment_method" id="payment_method" class="w-full border rounded p-2" required>
+                <option value="credit_card">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="cash_on_delivery">Cash on Delivery</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
+    </form>
 </div>

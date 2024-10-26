@@ -29,7 +29,7 @@ $router->get('/home', function () {
     $controller = new ProductController();
     $controller->showHomePage();
 });
-
+// Route cho sản phẩm
 $router->get('/products', function () {
     $controller = new ProductController();
     $controller->showProductsPage();
@@ -39,7 +39,11 @@ $router->get('/products/([^/]+)', function ($category_name) {
     $controller = new ProductController();
     $controller->showProductsPage($category_name);
 });
-
+$router->get('/product-detail/(\d+)', function ($productId) {
+    $controller = new ProductController();
+    $controller->showProductDetail($productId);
+});
+// Route cho đăng nhập
 $router->get('/login', function () use ($conn) {
     $controller = new UserController($conn);
     $controller->showLoginForm();
@@ -71,8 +75,7 @@ $router->get('/admin/products', function () {
     $controller = new ProductController();
     $controller->listProducts();
 });
-
-// Thêm sản phẩm mới (admin)
+// Route cho admin
 $router->get('/admin/products/add', function () {
     $controller = new ProductController();
     $controller->addProduct();
@@ -81,8 +84,6 @@ $router->post('/admin/products/add', function () {
     $controller = new ProductController();
     $controller->addProduct();
 });
-
-// Sửa sản phẩm (admin)
 $router->get('/admin/products/edit/(\d+)', function ($id) {
     $controller = new ProductController();
     $controller->editProduct($id);
@@ -91,11 +92,66 @@ $router->post('/admin/products/edit/(\d+)', function ($id) {
     $controller = new ProductController();
     $controller->editProduct($id);
 });
-
-// Xóa sản phẩm (admin)
 $router->post('/admin/products/delete/(\d+)', function ($id) {
     $controller = new ProductController();
     $controller->deleteProduct($id);
 });
+
+
+// Route cho cart
+$router->get('/cart', function () use ($conn) {
+    $controller = new CartController($conn);
+    $controller->index();
+});
+
+$router->post('/cart/add', function () use ($conn) {
+    $controller = new CartController($conn);
+    $controller->addToCart();
+});
+
+$router->post('/cart/update', function () use ($conn) {
+    $controller = new CartController($conn);
+    $controller->updateCartItem();
+});
+
+$router->post('/cart/delete', function () use ($conn) {
+    $controller = new CartController($conn);
+    $controller->deleteCartItem();
+});
+
+// Route cho cart
+// $router->get('/checkout', function () use ($conn) {
+//     $controller = new OrderController($conn);
+//     $controller->checkout();
+// });
+
+// $router->post('/checkout', function () use ($conn) {
+//     $controller = new OrderController($conn);
+//     $controller->placeOrder();
+// });
+
+// $router->get('/order-success', function () {
+//     $controller = new OrderController(null);
+//     $controller->orderSuccess();
+// });
+$router->post('/place-order', function () use ($conn) {
+    $controller = new OrderController($conn);
+    $controller->placeOrder();
+});
+$router->get('/checkout', function () use ($conn) {
+    $orderController = new OrderController($conn);
+    $orderController->checkout();
+});
+
+$router->post('/place-order', function () use ($conn) {
+    $orderController = new OrderController($conn);
+    $orderController->placeOrder();
+});
+
+$router->get('/order-success', function () use ($conn) {
+    $orderController = new OrderController($conn);
+    $orderController->orderSuccess();
+});
+
 // Chạy Router
 $router->run();

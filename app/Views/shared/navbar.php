@@ -20,12 +20,18 @@
     <div class="hidden lg:flex space-x-8 items-center" id="navbar-menu">
       <a href="<?= url('/home') ?>" class="hover:text-yellow-300 transition duration-300">Home</a>
       <a href="<?= url('/products') ?>" class="hover:text-yellow-300 transition duration-300">Products</a>
+      <?php
+      // Đảm bảo rằng biến này được thiết lập từ phiên trước đó
+      $cartItemCount = $_SESSION['cart_count'] ?? 0;
+      ?>
+
       <a href="<?= url('/cart') ?>" class="relative hover:text-yellow-300 transition duration-300">
-        <i class="fas fa-shopping-cart"></i> Cart
+        <i class="fas fa-shopping-cart"></i> Giỏ hàng
         <span class="bg-yellow-300 text-red-600 font-bold rounded-full text-xs px-2 py-1 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
-          <?= $cartItemCount ?? 0 ?>
+          <?= $cartItemCount ?>
         </span>
       </a>
+
 
       <?php if (isset($_SESSION['user_name'])): ?>
         <!-- User is logged in -->

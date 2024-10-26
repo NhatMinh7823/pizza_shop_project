@@ -1,67 +1,50 @@
-<?php
-require_once '../config.php';
-require_once '../controllers/ProductController.php';
-
-// Khởi tạo ProductController
-$productController = new ProductController($conn);
-
-// Lấy ID sản phẩm từ URL
-$product_id = isset($_GET['id']) ? $_GET['id'] : null;
-$product = $productController->getProductDetails($product_id);
-
-// Kiểm tra nếu sản phẩm không tồn tại
-if (!$product) {
-    echo "<h1 class='text-center mt-5'>Product not found</h1>";
-    exit();
-}
-?>
+<?php $this->layout('shared/layout', ['title' => 'Product']) ?>
 
 <div class="container my-5">
+  <?php if (isset($product)): ?>
     <div class="row">
-        <!-- Hình ảnh sản phẩm -->
-        <div class="col-md-6">
-            <img src="/images/<?php echo htmlspecialchars($product['image']); ?>"
-                class="img-fluid rounded-lg shadow-lg" style="width: 80%; height: auto;" alt="<?php echo htmlspecialchars($product['name']); ?>">
-        </div>
+      <!-- Hình ảnh sản phẩm -->
+      <div class="col-md-6">
+        <img src="/images/<?= htmlspecialchars($product['image']) ?>"
+          alt="<?= htmlspecialchars($product['name']) ?>"
+          class="w-3/5 h-auto mx-auto object-cover rounded-lg transition duration-500 ease-in-out transform hover:rotate-12 hover:scale-110">
+      </div>
 
-        <!-- Chi tiết sản phẩm -->
-        <div class="col-md-6">
-            <h1 class="text-3xl font-bold text-gray-800 mb-3"><?php echo htmlspecialchars($product['name']); ?></h1>
-            <p class="text-lg text-gray-600 mb-3"><?php echo htmlspecialchars($product['description']); ?></p>
-            <h3 class="text-2xl font-semibold text-danger mb-4">$<?php echo htmlspecialchars($product['price']); ?></h3>
+      <!-- Thông tin sản phẩm -->
+      <div class="col-md-6">
+        <h1 class="display-4 font-weight-bold"><?= htmlspecialchars($product['name']) ?></h1>
 
-            <!-- Form thêm vào giỏ hàng -->
-            <form method="POST" class="add-to-cart-form" style="display:inline;">
-                <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
-                <div class="form-group mb-4">
-                    <label for="quantity" class="text-lg font-semibold">Quantity:</label>
-                    <input type="number" class="form-control w-25" id="quantity" name="quantity" value="1" min="1">
-                </div>
-                <button type="button" class="btn btn-primary add-to-cart-button">Add to Cart</button>
-            </form>
-        </div>
+        <?php if (isset($product['discount']) && !empty($product['discount'])): ?>
+          <p class="text-muted">
+            <del>$<?= htmlspecialchars($product['price']) ?></del>
+          </p>
+          <p class="text-danger h4">
+            $<?= htmlspecialchars($product['discount']) ?>
+            <span class="small">(Discounted)</span>
+          </p>
+          <p class="text-muted">
+            Discount ends at: <?= htmlspecialchars($product['discount_end_time']) ?>
+          </p>
+        <?php else: ?>
+          <p class="text-success h4">
+            $<?= htmlspecialchars($product['price']) ?>
+          </p>
+        <?php endif; ?>
+
+        <p class="my-4"><?= htmlspecialchars($product['description']) ?></p>
+
+        <!-- Thêm vào giỏ hàng -->
+        <form action="<?= url('/cart/add') ?>" method="POST">
+          <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['id']) ?>">
+
+          <label for="quantity" class="font-weight-bold">Quantity:</label>
+          <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control mb-3 w-25">
+
+          <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+        </form>
+      </div>
     </div>
-
-    <!-- Sản phẩm liên quan ngẫu nhiên -->
-    <div class="related-products mt-5">
-        <h2 class="text-center text-2xl font-bold text-gray-800">You May Also Like</h2>
-        <div class="row">
-            <?php
-            $relatedProducts = $productController->getRandomProducts(3); // Lấy 3 sản phẩm ngẫu nhiên
-            foreach ($relatedProducts as $relatedProduct):
-            ?>
-                <div class="col-md-4 col-sm-6 p-4">
-                    <div class="card h-full bg-white rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out">
-                        <img class="card-img-top" src="/images/<?php echo htmlspecialchars($relatedProduct['image']); ?>"
-                            alt="<?php echo htmlspecialchars($relatedProduct['name']); ?>">
-                        <div class="card-body">
-                            <h5 class="card-title text-xl font-bold text-gray-800"><?php echo htmlspecialchars($relatedProduct['name']); ?></h5>
-                            <p class="card-text text-danger font-semibold">$<?php echo htmlspecialchars($relatedProduct['price']); ?></p>
-                            <a href="/index.php?page=product-detail&id=<?php echo $relatedProduct['id']; ?>" class="btn btn-primary mt-2">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
+  <?php else: ?>
+    <p class="text-center text-danger mt-5">Product not found.</p>
+  <?php endif; ?>
 </div>
