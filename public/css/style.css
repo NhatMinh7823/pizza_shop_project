@@ -133,3 +133,18 @@ body {
     font-weight: bolder;
     color: #e74c3c;
 }
+
+.form-group {
+    position: relative;
+    /* Đảm bảo dropdown hiển thị trong vùng form */
+    z-index: 1;
+    /* Đảm bảo dropdown không bị che khuất */
+}
+
+.form-control {
+    max-height: 200px;
+    /* Đặt chiều cao tối đa nếu cần thiết */
+    overflow-y: auto;
+    /* Bật cuộn dọc cho các danh mục dài */
+    z-index: 1;
+}

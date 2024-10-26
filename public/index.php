@@ -1,72 +1,101 @@
 <?php
-ob_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+use Bramus\Router\Router;
+use League\Plates\Engine;
+use App\Controllers\HomeController;
+use App\Controllers\ProductController;
+use App\Controllers\CartController;
+use App\Controllers\UserController;
+use App\Controllers\OrderController;
+
+require_once __DIR__ . '/../vendor/autoload.php'; // Autoload Composer
+require_once __DIR__ . '/../config/config.php'; // Load config database
+require_once __DIR__ . '/../app/functions.php';
+// Bắt đầu session
 session_start();
+$templates = new Engine(__DIR__ . '/../app/Views');
+// Khởi tạo Router
+$router = new Router();
 
-// Include file cấu hình (kết nối database)
-require_once '../config.php';
-// Kiểm tra nếu bấm đăng xuất
-if (isset($_POST['logout'])) {
-    // Destroy session to log out the user
-    session_unset();
-    session_destroy();
-    // Redirect to the home page but with a URL parameter to show the modal
-    header("Location: /index.php?page=home&logout=success");
-    exit();
-}
+// Route cho trang chủ
+$router->get('/', function () {
+    $controller = new ProductController();
+    $controller->showHomePage();
+});
+$router->get('/home', function () {
+    $controller = new ProductController();
+    $controller->showHomePage();
+});
 
-// Include các phần như header
-require_once '../includes/header.php';
-require_once '../views/partials/navbar.php';
+$router->get('/products', function () {
+    $controller = new ProductController();
+    $controller->showProductsPage();
+});
 
+$router->get('/products/([^/]+)', function ($category_name) {
+    $controller = new ProductController();
+    $controller->showProductsPage($category_name);
+});
 
-// Routing đơn giản thông qua tham số "page"
-$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+$router->get('/login', function () use ($conn) {
+    $controller = new UserController($conn);
+    $controller->showLoginForm();
+});
 
-// Điều hướng tới các trang khác nhau
-switch ($page) {
-    case 'home':
-        include '../pages/home.php';
-        break;
-    case 'products':
-        include '../pages/products.php';
-        break;
-    case 'product-detail':
-        include '../pages/product-detail.php';
-        break;
-    case 'cart':
-        include '../pages/cart.php';
-        break;
-    case 'checkout':
-        include '../pages/checkout.php';
-        break;
-    case 'login':
-        include '../pages/login.php';
-        break;
-    case 'account':
-        include '../pages/account.php';
-        break;
-    case 'register':
-        include '../pages/register.php';
-        break;
-    case 'order-success':
-        include '../pages/order-success.php';
-        break;
-    case 'admin':
-        include '../admin/list-products.php';
-        break;
-    case 'add':
-        include '../admin/add-product.php';
-        break;
-    case 'edit':
-        include '../admin/edit-product.php';
-        break;
-    case 'delete':
-        include '../admin/delete-product.php';
-        break;
-    default:
-        include '../pages/404.php'; // Trang lỗi 404
-        break;
-}
+$router->post('/login', function () use ($conn) {
+    $controller = new UserController($conn);
+    $controller->login();
+});
 
-require_once '../includes/footer.php';
-ob_end_flush();  
+$router->get('/register', function () use ($conn) {
+    $controller = new UserController($conn);
+    $controller->showRegisterForm();
+});
+
+$router->post('/register', function () use ($conn) {
+    $controller = new UserController($conn);
+    $controller->register();
+});
+$router->get('/account', function () use ($conn) {
+    $controller = new UserController($conn);
+    $controller->account();
+});
+$router->post('/logout', function () {
+    $controller = new UserController($conn);
+    $controller->logout();
+});
+$router->get('/admin/products', function () {
+    $controller = new ProductController();
+    $controller->listProducts();
+});
+
+// Thêm sản phẩm mới (admin)
+$router->get('/admin/products/add', function () {
+    $controller = new ProductController();
+    $controller->addProduct();
+});
+$router->post('/admin/products/add', function () {
+    $controller = new ProductController();
+    $controller->addProduct();
+});
+
+// Sửa sản phẩm (admin)
+$router->get('/admin/products/edit/(\d+)', function ($id) {
+    $controller = new ProductController();
+    $controller->editProduct($id);
+});
+$router->post('/admin/products/edit/(\d+)', function ($id) {
+    $controller = new ProductController();
+    $controller->editProduct($id);
+});
+
+// Xóa sản phẩm (admin)
+$router->post('/admin/products/delete/(\d+)', function ($id) {
+    $controller = new ProductController();
+    $controller->deleteProduct($id);
+});
+// Chạy Router
+$router->run();
